@@ -1,0 +1,12 @@
+{
+  "foundryUrl": "https://crackpal.usw-16.palantirfoundry.com",
+  "site": {
+    "application": "ri.third-party-applications.main.application.aa2d1d4a-0fc7-4f14-899f-533e345c055e",
+    "directory": "./dist",
+    "autoVersion": {
+      "type": "git-describe",
+      "tagPrefix": ""
+    },
+    "uploadOnly": false
+  }
+}
