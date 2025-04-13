@@ -17,7 +17,7 @@ export default function Home() {
   };
   return (
     <Layout>
-      <h1>🍕 Plato’s Pizza Dashboard</h1>
+      <h1>🍕 Hemanth’s Pizza Dashboard</h1>
 
       <section>
         <h2>Top 3 Pizzas</h2>
