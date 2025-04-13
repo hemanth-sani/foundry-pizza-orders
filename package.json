@@ -12,12 +12,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pizza-ordering-application/sdk": "latest",
     "@osdk/client": "^2.1.2",
     "@osdk/oauth": "^1.0.0",
+    "@pizza-ordering-application/sdk": "latest",
     "react": "^18",
     "react-dom": "^18",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.23.1",
+    "swr": "^2.3.3"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

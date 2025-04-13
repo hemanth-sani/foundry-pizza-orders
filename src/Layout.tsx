@@ -7,23 +7,32 @@ interface LayoutProps {
   children?: React.ReactNode;
 }
 
-function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
   return (
-    <>
-      <div>
-        <a
-          href="https://www.palantir.com/docs/foundry/ontology-sdk/overview/"
-          target="_blank"
-        >
-          <img src={palantirLogo} className={css.logo} alt="Palantir logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className={css.logo} alt="React logo" />
-        </a>
-      </div>
-      {children}
-    </>
+    <div className={css.wrapper}>
+      <header className={css.header}>
+        <div className={css.brand}>
+          <h1>🍕 Plato’s Pizza</h1>
+        </div>
+        <div className={css.links}>
+          <a
+            href="https://www.palantir.com/docs/foundry/ontology-sdk/overview/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img src={palantirLogo} className={css.logo} alt="Palantir logo" />
+          </a>
+          <a href="https://react.dev" target="_blank" rel="noreferrer">
+            <img src={reactLogo} className={css.logo} alt="React logo" />
+          </a>
+        </div>
+      </header>
+
+      <main className={css.content}>{children}</main>
+
+      <footer className={css.footer}>
+        <p>Built with ❤️ on Foundry using React + Ontology SDK</p>
+      </footer>
+    </div>
   );
 }
-
-export default Layout;
