@@ -5,6 +5,10 @@ import Home from "./Home";
 import PizzaMenu from "./pages/PizzaMenu";
 import OrdersPage from "./pages/OrdersPage";
 import "./index.css";
+import CartPage from "./pages/CartPage";
+import { CartProvider } from "./model/CartProvider";
+
+
 
 const router = createBrowserRouter(
   [
@@ -20,6 +24,7 @@ const router = createBrowserRouter(
       path: "/orders",
       element: <OrdersPage />,
     },
+    { path: "/cart", element: <CartPage /> },
     {
       path: "/auth/callback",
       element: <AuthCallback />,
@@ -29,5 +34,7 @@ const router = createBrowserRouter(
 );
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
+  <CartProvider> 
   <RouterProvider router={router} />
+</CartProvider>
 );

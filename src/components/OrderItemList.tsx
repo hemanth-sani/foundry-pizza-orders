@@ -1,3 +1,4 @@
+import styles from "./OrderItemList.module.css";
 import { HemanthOrderItem } from "@pizza-ordering-application/sdk";
 import { Osdk } from "@osdk/client";
 
@@ -11,12 +12,14 @@ export default function OrderItemList({ items }: Props) {
   }
 
   return (
-    <div style={{ marginTop: "1rem" }}>
-      <h4>🧾 Order Items</h4>
-      <ul>
+    <div className={styles.orderItemsWrapper}>
+      <h4 className={styles.orderItemsTitle}>🧾 Order Items</h4>
+      <ul className={styles.orderItemList}>
         {items.map((item) => (
-          <li key={item.orderAndPizzaId}>
-            🍕 Pizza ID: <strong>{item.pizzaId}</strong> — Qty: {item.quantity} — 💰 ${item.totalRevenue}
+          <li key={item.orderAndPizzaId} className={styles.orderItem}>
+            🍕 <strong>Pizza ID:</strong> {item.pizzaId} &nbsp;<br></br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Qty:</strong> {item.quantity} <br></br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Total:</strong> ${item.totalRevenue}
           </li>
         ))}
       </ul>

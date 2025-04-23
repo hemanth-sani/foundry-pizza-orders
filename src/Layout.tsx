@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
     <div className={css.wrapper}>
       <header className={css.header}>
         <div className={css.brand}>
-          <h1>🍕 Plato’s Pizza</h1>
+          <h1>🍕 Hemanth's Pizza</h1>
         </div>
 
         <nav className={css.nav}>
@@ -23,6 +23,9 @@ export default function Layout({ children }: LayoutProps) {
           </NavLink>
           <NavLink to="/orders" className={({ isActive }) => isActive ? css.active : ""}>
             Orders
+          </NavLink>
+          <NavLink to="/cart" className={({ isActive }) => isActive ? css.active : ""}>
+          Cart
           </NavLink>
         </nav>
       </header>

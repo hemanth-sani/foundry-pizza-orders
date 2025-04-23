@@ -12,7 +12,9 @@ export default function useOrders() {
 
   const fetchOrderItems = useCallback(
     async (order: Osdk.Instance<HemanthOrder>) => {
-      const result = await order.$link.hemanthOrderItems.fetchPageWithErrors({ $pageSize: 30 });
+      const result = await order.$link.hemanthOrderItems.fetchPageWithErrors({ 
+        $pageSize: 30 
+      });
       return isOk(result) ? result.value.data : [];
     },
     []

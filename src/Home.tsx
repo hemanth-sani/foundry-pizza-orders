@@ -5,6 +5,7 @@ import useOrders from "./hooks/useOrders";
 import OrderItemList from "./components/OrderItemList";
 import { Osdk } from "@osdk/client";
 import { HemanthOrder, HemanthOrderItem } from "@pizza-ordering-application/sdk";
+import css from "./Home.module.css";
 
 export default function Home() {
   const { pizzas, isLoading: pizzaLoading } = usePizzaMenu();
@@ -19,32 +20,34 @@ export default function Home() {
     <Layout>
       <h1>🍕 Hemanth’s Pizza Dashboard</h1>
 
-      <section>
+      <section className={css.section}>
         <h2>Top 3 Pizzas</h2>
         {pizzaLoading ? (
           <p>Loading...</p>
         ) : (
-          <ul>
+          <ul className={css.list}>
             {pizzas?.slice(0, 3).map((pizza) => (
               <li key={pizza.pizzaId}>
-                {pizza.name} — {pizza.size} 
+                <strong>{pizza.name}</strong> – {pizza.size} – ${pizza.price}
               </li>
             ))}
           </ul>
         )}
       </section>
 
-      <section style={{ marginTop: "2rem" }}>
+      <section className={css.section}>
         <h2>Recent Orders</h2>
         {orderLoading ? (
           <p>Loading orders...</p>
         ) : (
           <>
             {orders?.slice(0, 3).map((order) => (
-              <div key={order.orderId}>
+              <div key={order.orderId} className={css.order}>
                 <strong>Order #{order.orderId}</strong> — {order.ordeDate}
                 <br />
-                <button onClick={() => handleViewItems(order)}>View Items</button>
+                <button className={css.button} onClick={() => handleViewItems(order)}>
+                  View Items
+                </button>
               </div>
             ))}
             <OrderItemList items={items} />

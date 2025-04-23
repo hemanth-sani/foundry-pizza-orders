@@ -1,19 +1,37 @@
-import { HemanthPizza } from "@pizza-ordering-application/sdk";
+import { HemanthBestSellingPizza } from "@pizza-ordering-application/sdk";
 import { Osdk } from "@osdk/client";
+import { useCart } from "../hooks/useCart";
+import styles from "./PizzaMenu.module.css";
 
 interface Props {
-  pizza: Osdk.Instance<HemanthPizza>; 
-  onAdd: (id: string) => void;
+  name: string;
+  variants: Osdk.Instance<HemanthBestSellingPizza>[];
 }
 
-export default function PizzaCard({ pizza, onAdd }: Props) {
+export default function PizzaCard({ name, variants }: Props) {
+  const { addToCart } = useCart();
+  const ingredients = variants[0]?.ingredients ?? "Not listed";
+
   return (
-    <div style={{ border: "1px solid #ccc", padding: "1rem", borderRadius: "8px" }}>
-      <h3>{pizza.name}</h3>
-      <p>Size: {pizza.size}</p>
-      <p>Category: {pizza.category}</p>
-      
-      <button onClick={() => onAdd(pizza.pizzaId)}>Add to Order</button>
+    <div className={styles.pizzaCard}>
+      <h3 className={styles.pizzaTitle}>🍕 {name}</h3>
+      <p className={styles.pizzaIngredients}>
+        <strong>Ingredients:</strong> {ingredients}
+      </p>
+
+      <ul className={styles.pizzaList}>
+        {variants.map((variant) => (
+          <li key={variant.pizzaId} className={styles.pizzaVariant}>
+            {variant.size} — ${variant.price}
+            <button
+              className={styles.addButton}
+              onClick={() => addToCart(variant)}
+            >
+              Add
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

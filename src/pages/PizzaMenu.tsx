@@ -1,23 +1,31 @@
 import usePizzaMenu from "../hooks/usePizzaMenu";
 import PizzaCard from "../components/PizzaCard";
 import Layout from "../Layout";
+import { HemanthBestSellingPizza } from "@pizza-ordering-application/sdk";
+import { Osdk } from "@osdk/client";
 
 export default function PizzaMenu() {
   const { pizzas, isLoading } = usePizzaMenu();
 
-  const handleAdd = (pizzaId: string) => {
-    alert(`Add pizza ${pizzaId} to an order`);
-  };
+  const grouped = (pizzas ?? []).reduce<
+    Record<string, Osdk.Instance<HemanthBestSellingPizza>[]>
+  >((acc, pizza) => {
+    const key = pizza.name ?? "Unnamed Pizza";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(pizza);
+    return acc;
+  }, {});
 
   return (
     <Layout>
       <h2>🍕 Full Pizza Menu</h2>
+
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-          {pizzas?.map((pizza) => (
-            <PizzaCard key={pizza.pizzaId} pizza={pizza} onAdd={handleAdd} />
+        <div className="menuContainer">
+          {Object.entries(grouped).map(([name, variants]) => (
+            <PizzaCard key={name} name={name} variants={variants} />
           ))}
         </div>
       )}

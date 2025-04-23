@@ -1,7 +1,59 @@
-.methods {
-  padding: 2em;
-  gap: 2em;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+.section {
+  margin-bottom: 2.5rem;
+  padding: 1rem;
+  background-color: #fff9f0;
+  border: 1px solid #f1c27d;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.section h2 {
+  margin-bottom: 0.75rem;
+  color: #d62828; /* Tomato red header */
+  font-size: 1.3rem;
+  border-bottom: 1px dashed #f1c27d;
+  padding-bottom: 0.5rem;
+}
+
+.list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  color: #2a2a2a;
+}
+
+.list li {
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  border-bottom: 1px dashed #f1c27d;
+}
+
+.list li:last-child {
+  border-bottom: none;
+}
+
+.order {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #fff3e6;
+  border: 1px solid #f4a261;
+  border-radius: 8px;
+  color: #2a2a2a;
+}
+
+.button {
+  margin-top: 0.5rem;
+  background-color: #d62828;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #b71c1c;
 }

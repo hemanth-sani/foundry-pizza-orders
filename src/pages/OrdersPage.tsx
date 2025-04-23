@@ -7,11 +7,36 @@ import { HemanthOrder, HemanthOrderItem } from "@pizza-ordering-application/sdk"
 
 export default function OrdersPage() {
   const { orders, isLoading, fetchOrderItems } = useOrders();
-  const [items, setItems] = useState<Osdk.Instance<HemanthOrderItem>[]>([]);
+
+  // Stores items per orderId
+  const [itemsByOrder, setItemsByOrder] = useState<Record<
+    string,
+    Osdk.Instance<HemanthOrderItem>[]
+  >>({});
+
+  const [expandedOrderIds, setExpandedOrderIds] = useState<Set<string>>(new Set());
 
   const handleViewItems = async (order: Osdk.Instance<HemanthOrder>) => {
-    const result = await fetchOrderItems(order);
-    setItems(result);
+    const orderId = order.orderId?.toString() ?? "unknown";
+
+    // If already loaded, just toggle visibility
+    if (itemsByOrder[orderId]) {
+      setExpandedOrderIds((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(orderId)) newSet.delete(orderId);
+        else newSet.add(orderId);
+        return newSet;
+      });
+      return;
+    }
+
+    // Fetch and store
+    const items = await fetchOrderItems(order);
+    setItemsByOrder((prev) => ({
+      ...prev,
+      [orderId]: items,
+    }));
+    setExpandedOrderIds((prev) => new Set(prev).add(orderId));
   };
 
   return (
@@ -21,16 +46,22 @@ export default function OrdersPage() {
         <p>Loading orders...</p>
       ) : (
         <>
-          {orders?.map((order) => (
-            <div key={order.orderId} style={{ marginBottom: "1rem" }}>
-              <strong>Order #{order.orderId}</strong> — {order.ordeDate}
-              <br />
-              <button onClick={() => handleViewItems(order)}>View Items</button>
-            </div>
-          ))}
+          {orders?.map((order) => {
+            const orderId = order.orderId?.toString() ?? "unknown";
+            return (
+              <div key={orderId} style={{ marginBottom: "1.5rem" }}>
+                <strong>Order #{order.orderId}</strong> — {order.ordeDate}
+                <br />
+                <button onClick={() => handleViewItems(order)}>
+                  {expandedOrderIds.has(orderId) ? "Hide Items" : "View Items"}
+                </button>
 
-       
-          <OrderItemList items={items} />
+                {expandedOrderIds.has(orderId) && itemsByOrder[orderId] && (
+                  <OrderItemList items={itemsByOrder[orderId]} />
+                )}
+              </div>
+            );
+          })}
         </>
       )}
     </Layout>
