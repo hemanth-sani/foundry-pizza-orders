@@ -1,43 +1,64 @@
 import { useCart } from "../hooks/useCart";
+import { placeOrder } from "../hooks/usePlaceOrder";
 import Layout from "../Layout";
 import css from "./CartPage.module.css";
+import { useState } from "react";
 
 export default function CartPage() {
   const { cart, clearCart } = useCart();
+  const [orderMsg, setOrderMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalCost = cart.reduce(
-    (sum, item) => sum + item.quantity * Number(item.pizza.price),
-    0
-  );
+  const handleOrder = async () => {
+    if (cart.length === 0) {
+      setOrderMsg("⚠️ Your cart is empty!");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+       console.log("Cart before placing order:", cart); // Add this
+  const result = await placeOrder(cart);
+  console.log("Place order result:", result);
+
+      if (result.orderStatus === "fulfilled") {
+        setOrderMsg("✅ Order placed successfully!");
+        clearCart();
+      } else {
+        setOrderMsg(`❌ Order Denied: ${result.denialReason || "Unknown reason"}`);
+      }
+    } catch (error) {
+      setOrderMsg("❌ Something went wrong while placing the order.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Layout>
-      <h2>🛒 Your Cart</h2>
+      <h2>🛒 Cart</h2>
 
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <div className={css.cartContainer}>
-          <ul className={css.cartList}>
-            {cart.map((item) => (
-              <li key={item.pizza.pizzaId} className={css.cartItem}>
-                <strong>{item.pizza.name}</strong> ({item.pizza.size})<br />
-                {item.quantity} × ${Number(item.pizza.price).toFixed(2)} ={" "}
-                <strong>${(item.quantity * Number(item.pizza.price)).toFixed(2)}</strong>
-              </li>
-            ))}
-          </ul>
+      {cart.length === 0 && <p>No pizzas in cart.</p>}
 
-          <div className={css.summary}>
-            <p><strong>Total Items:</strong> {totalQuantity}</p>
-            <p><strong>Total Price:</strong> ${totalCost.toFixed(2)}</p>
-            <button className={css.clearButton} onClick={clearCart}>
-              🧹 Clear Cart
-            </button>
-          </div>
+      {cart.map((item) => (
+        <div key={item.pizza.pizzaId}>
+          🍕 <strong>{item.pizza.name}</strong> ({item.pizza.size}) × {item.quantity}
         </div>
-      )}
+      ))}
+
+      <button className={css.clearButton} onClick={handleOrder} disabled={isLoading}>
+        {isLoading ? "Placing Order..." : "🚀 Place Order"}
+      </button>
+
+      {orderMsg && <p>{orderMsg}</p>}
     </Layout>
   );
 }
+
+
+
+// 1. step placeOrder(cart) it should also get updated in the orders page and get updated to the ontology object type.
+// 2.your checking but when the recipe is used then subtract the quantity from the inventory and get updated in the ontology object type and UI.
+// 3. where is it displayed 
+// 4

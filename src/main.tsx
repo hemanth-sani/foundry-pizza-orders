@@ -7,6 +7,7 @@ import OrdersPage from "./pages/OrdersPage";
 import "./index.css";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./model/CartProvider";
+import InventoryDashboard from "./pages/InventoryDashboard";
 
 
 
@@ -24,7 +25,12 @@ const router = createBrowserRouter(
       path: "/orders",
       element: <OrdersPage />,
     },
-    { path: "/cart", element: <CartPage /> },
+    { path: "/cart",
+      element: <CartPage /> 
+    },
+    { path: "/inventory",
+      element: <InventoryDashboard /> 
+    },
     {
       path: "/auth/callback",
       element: <AuthCallback />,

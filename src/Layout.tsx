@@ -27,6 +27,9 @@ export default function Layout({ children }: LayoutProps) {
           <NavLink to="/cart" className={({ isActive }) => isActive ? css.active : ""}>
           Cart
           </NavLink>
+          <NavLink to="/inventory" className={({ isActive }) => isActive ? css.active : ""}>
+          Inventory
+          </NavLink>
         </nav>
       </header>
 
