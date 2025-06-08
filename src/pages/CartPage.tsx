@@ -17,9 +17,9 @@ export default function CartPage() {
 
     setIsLoading(true);
     try {
-       console.log("Cart before placing order:", cart); // Add this
-  const result = await placeOrder(cart);
-  console.log("Place order result:", result);
+        console.log("Cart before placing order:", cart); // Add this
+        const result = await placeOrder(cart);
+        console.log("Place order result:", result);
 
       if (result.orderStatus === "fulfilled") {
         setOrderMsg("✅ Order placed successfully!");

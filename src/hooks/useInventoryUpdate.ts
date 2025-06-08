@@ -1,42 +1,46 @@
 import client from "../client";
 import {
-  HemanthInventoryUsage,
   HemanthPizzaRecipe,
-  updatableInventory,
+  HemanthInventoryUsage,
+  updatableInventory
 } from "@pizza-ordering-application/sdk";
 import { Osdk } from "@osdk/client";
 
+// This function updates inventory for a given pizza type and quantity
 export async function updateInventory(pizzaTypeId?: string, quantity: number = 1) {
+ 
   if (!pizzaTypeId) {
-    return { success: false, reason: "Pizza Type ID is required." };
+    return { success: false, reason: "Missing pizzaTypeId" };
   }
 
-  const pizzaRecipes: Osdk.Instance<HemanthPizzaRecipe>[] = [];
-  let count = 0;
-  const limit = 50;
+  // Step 1: Get all recipes for this pizza type
+  const recipeLines: Osdk.Instance<HemanthPizzaRecipe>[] = [];
 
   for await (const recipe of client(HemanthPizzaRecipe).asyncIter()) {
+   
     if (recipe.pizzaTypeId === pizzaTypeId) {
-      pizzaRecipes.push(recipe);
-      count++;
-      if (count >= limit) break;
+      recipeLines.push(recipe);
     }
   }
+  
 
-  if (pizzaRecipes.length === 0) {
-    return { success: false, reason: "No recipe found for given pizza." };
+  if (recipeLines.length === 0) {
+    return { success: false, reason: "No recipe found for this pizza type." };
   }
 
-  for (const r of pizzaRecipes) {
-    if (!r.inventoryId) {
+  // Step 2: Check if all ingredients are available in required quantity
+  for (const recipe of recipeLines) {
+    const ingredientId = recipe.inventoryId;
+    const requiredQty = (recipe.quantityRequired ?? 0) * quantity;
+   
+    if (!ingredientId) {
       return { success: false, reason: "Missing inventoryId in recipe." };
     }
 
-    const ingredient = await client(HemanthInventoryUsage).fetchOne(r.inventoryId);
-    const currentQty = ingredient.currentQuantity ?? 0;
-    const requiredQty = (r.quantityRequired ?? 0) * quantity;
-
-    if (currentQty < requiredQty) {
+    const ingredient = await client(HemanthInventoryUsage).fetchOne(ingredientId);
+    const availableQty = ingredient.currentQuantity ?? 0;
+   
+    if (availableQty < requiredQty) {
       return {
         success: false,
         reason: `${ingredient.ingredients ?? "Ingredient"} is insufficient.`,
@@ -44,13 +48,15 @@ export async function updateInventory(pizzaTypeId?: string, quantity: number = 1
     }
   }
 
-  for (const r of pizzaRecipes) {
-    const ingredient = await client(HemanthInventoryUsage).fetchOne(r.inventoryId!);
-    const updatedQty = (ingredient.currentQuantity ?? 0) - ((r.quantityRequired ?? 0) * quantity);
+  // Step 3: Deduct quantities for each ingredient and update
+  for (const recipe of recipeLines) {
+    const ingredient = await client(HemanthInventoryUsage).fetchOne(recipe.inventoryId!);
+    const usedQty = (recipe.quantityRequired ?? 0) * quantity;
+    const newQty = (ingredient.currentQuantity ?? 0) - usedQty;
 
     await client(updatableInventory).applyAction({
-      "hemanth_inventory_usage-151d57": r.inventoryId!,
-      current_quantity: updatedQty,
+      "hemanth_inventory_usage-151d57": recipe.inventoryId!,
+      current_quantity: newQty,
       restock_quantity: ingredient.restockQuantity ?? 0,
       reorder_threshold: ingredient.reorderThreshold ?? 0,
     });

@@ -1,8 +1,13 @@
 import { createContext } from "react";
-import { HemanthBestSellingPizza } from "@pizza-ordering-application/sdk";
-import { Osdk } from "@osdk/client";
 
-export type Pizza = Osdk.Instance<HemanthBestSellingPizza>;
+export type Pizza = {
+  pizzaId: string;
+  pizzaTypeId: string;
+  name: string;
+  size: string;
+  price: number;
+  ingredients: string;
+};
 
 export interface CartItem {
   pizza: Pizza;

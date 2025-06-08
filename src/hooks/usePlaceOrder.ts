@@ -6,7 +6,9 @@ import {
 import { updateInventory } from "./useInventoryUpdate";
 import { CartItem } from "../model/CartContext";
 
+
 export async function placeOrder(cart: CartItem[]) {
+
   if (!cart.length) {
     return {
       orderStatus: "denied",
@@ -21,22 +23,37 @@ export async function placeOrder(cart: CartItem[]) {
 
   try {
     for (const { pizza, quantity } of cart) {
+      console.log(pizza.pizzaTypeId, quantity)
       const result = await updateInventory(pizza.pizzaTypeId, quantity);
+      
       if (!result.success) {
         orderStatus = "denied";
+        
         denialReason = result.reason ?? null;
         break;
       }
     }
 
     // 🚨 Important: Ensure this object uses the correct schema keys as per your Ontology action
-    await client(createHemanthOrderStatus).applyAction({
-      order_id: orderId,
-      order_time: new Date().toISOString(),
-      order_status: orderStatus,
-      denial_reason: denialReason ?? "",
-    });
+    console.log(orderId,orderStatus,denialReason)
+    try {
+      const result = await client(createHemanthOrderStatus).applyAction({
+        order_status: orderStatus,
+        order_time: new Date().toISOString(),
+        denial_reason: denialReason ?? "",
+      }, {
+        $returnEdits: true // Return the created object with its generated primary key
+      });
+      
+      if (result && result.type === "edits" && result.addedObjects.length > 0) {
+        const createdOrderId = result.addedObjects[0].primaryKey;
+        console.log("Generated Order ID:", createdOrderId);
+      }
+    } catch (error) {
+      console.error("Failed to create order status:", error);
+    }
 
+    console.log("hello",cart)
     if (orderStatus === "fulfilled") {
       for (const { pizza, quantity } of cart) {
         if (pizza.price === undefined) {
