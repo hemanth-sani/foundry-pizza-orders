@@ -1,0 +1,49 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+  .refresh {
+    border: none;
+    background: #f9752d;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .refresh:hover { background: #d85e1b; }
+  
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 1rem;
+  }
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0 0 0 / .08);
+    padding: 1rem 1.25rem;
+  }
+  .summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .time { color: #666; margin-left: .25rem; font-size: .85rem; }
+  .badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: .8rem;
+    text-transform: capitalize;
+  }
+  .fulfilled { background: #e4f8e7; color: #208b32; }
+  .denied    { background: #ffe8e6; color: #c62828; }
+  
+  .items {
+    margin-top: .75rem;
+    animation: fadeIn .2s ease-in;
+  }
+  @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+  

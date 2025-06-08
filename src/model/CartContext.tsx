@@ -17,6 +17,7 @@ export interface CartItem {
 export interface CartContextType {
   cart: CartItem[];
   addToCart: (pizza: Pizza) => void;
+  decrement: (pizzaId: string) => void;   // 👈 add this
   clearCart: () => void;
 }
 

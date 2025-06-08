@@ -1,69 +1,88 @@
-import  { useState } from "react";
+import { useState } from "react";
 import useOrders from "../hooks/useOrders";
 import Layout from "../Layout";
 import OrderItemList from "../components/OrderItemList";
 import { Osdk } from "@osdk/client";
-import { HemanthOrder, HemanthOrderItem } from "@pizza-ordering-application/sdk";
+import {
+  HemanthOrderStatus,
+  HemanthOrderDetails,
+} from "@pizza-ordering-application/sdk";
+import css from "./OrderPage.module.css";
 
 export default function OrdersPage() {
-  const { orders, isLoading, fetchOrderItems } = useOrders();
+  const { orders, isLoading, isError, fetchOrderItems, refreshOrders } = useOrders();
 
-  // Stores items per orderId
-  const [itemsByOrder, setItemsByOrder] = useState<Record<
-    string,
-    Osdk.Instance<HemanthOrderItem>[]
-  >>({});
+  const [details, setDetails] = useState<
+    Record<string, Osdk.Instance<HemanthOrderDetails>[]>
+  >({});
+  const [open, setOpen] = useState<Set<string>>(new Set());
 
-  const [expandedOrderIds, setExpandedOrderIds] = useState<Set<string>>(new Set());
-
-  const handleViewItems = async (order: Osdk.Instance<HemanthOrder>) => {
-    const orderId = order.orderId?.toString() ?? "unknown";
-
-    // If already loaded, just toggle visibility
-    if (itemsByOrder[orderId]) {
-      setExpandedOrderIds((prev) => {
-        const newSet = new Set(prev);
-        if (newSet.has(orderId)) newSet.delete(orderId);
-        else newSet.add(orderId);
-        return newSet;
+  const toggle = async (order: Osdk.Instance<HemanthOrderStatus>) => {
+    const id = order.orderId;
+    if (open.has(id)) {
+      setOpen((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
       });
       return;
     }
-
-    // Fetch and store
-    const items = await fetchOrderItems(order);
-    setItemsByOrder((prev) => ({
-      ...prev,
-      [orderId]: items,
-    }));
-    setExpandedOrderIds((prev) => new Set(prev).add(orderId));
+    if (!details[id]) {
+      const rows = await fetchOrderItems(order);
+      setDetails((prev) => ({ ...prev, [id]: rows }));
+    }
+    setOpen((prev) => new Set(prev).add(id));
   };
 
   return (
     <Layout>
-      <h2>🧾 All Orders</h2>
-      {isLoading ? (
-        <p>Loading orders...</p>
-      ) : (
-        <>
-          {orders?.map((order) => {
-            const orderId = order.orderId?.toString() ?? "unknown";
-            return (
-              <div key={orderId} style={{ marginBottom: "1.5rem" }}>
-                <strong>Order #{order.orderId}</strong> — {order.ordeDate}
-                <br />
-                <button onClick={() => handleViewItems(order)}>
-                  {expandedOrderIds.has(orderId) ? "Hide Items" : "View Items"}
-                </button>
+      <header className={css.header}>
+        <h2>🧾 Orders</h2>
+        <button onClick={() => refreshOrders()} className={css.refresh}>
+          ⟳ Refresh
+        </button>
+      </header>
 
-                {expandedOrderIds.has(orderId) && itemsByOrder[orderId] && (
-                  <OrderItemList items={itemsByOrder[orderId]} />
-                )}
+      {isLoading && <p>Loading orders…</p>}
+      {isError && <p>Could not load orders.</p>}
+
+      <div className={css.grid}>
+        {orders?.map((o) => {
+          const id = o.orderId;
+          const isOpen = open.has(id);
+          const denied = o.orderStatus === "denied";
+          return (
+            <article key={id} className={css.card}>
+              <div
+                className={css.summary}
+                onClick={() => toggle(o)}
+                role="button"
+                tabIndex={0}
+              >
+                <div>
+                  <strong>#{id}</strong>
+                  <span className={css.time}>— {o.orderTime}</span>
+                </div>
+
+                <span
+                  className={`${css.badge} ${
+                    denied ? css.denied : css.fulfilled
+                  }`}
+                  title={denied ? o.denialReason : "Fulfilled"}
+                >
+                  {o.orderStatus}
+                </span>
               </div>
-            );
-          })}
-        </>
-      )}
+
+              {isOpen && (
+                <div className={css.items}>
+                  <OrderItemList items={details[id] ?? []} />
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
     </Layout>
   );
 }

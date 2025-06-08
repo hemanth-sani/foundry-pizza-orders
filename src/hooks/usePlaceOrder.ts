@@ -20,6 +20,7 @@ export async function placeOrder(cart: CartItem[]) {
   const orderId = crypto.randomUUID();
   let orderStatus: "fulfilled" | "denied" = "fulfilled";
   let denialReason: string | null = null;
+  let createdOrderId: string | number | null = null;
 
   try {
     for (const { pizza, quantity } of cart) {
@@ -44,17 +45,19 @@ export async function placeOrder(cart: CartItem[]) {
       }, {
         $returnEdits: true // Return the created object with its generated primary key
       });
+     
+    
       
-      if (result && result.type === "edits" && result.addedObjects.length > 0) {
-        const createdOrderId = result.addedObjects[0].primaryKey;
-        console.log("Generated Order ID:", createdOrderId);
+      if (result && result.type === "edits") {
+        // Get the primary key of the first added object
+        createdOrderId = result.addedObjects[0].primaryKey as string | number;
       }
     } catch (error) {
       console.error("Failed to create order status:", error);
     }
 
     console.log("hello",cart)
-    if (orderStatus === "fulfilled") {
+    if (orderStatus === "fulfilled" && createdOrderId) {
       for (const { pizza, quantity } of cart) {
         if (pizza.price === undefined) {
           console.error("Pizza price is undefined");
@@ -64,19 +67,20 @@ export async function placeOrder(cart: CartItem[]) {
         const totalPrice = pizza.price * quantity;
         const cost = (totalPrice * 0.6).toFixed(2);
         const profit = (totalPrice * 0.4).toFixed(2);
-
+        
         await client(createHemanthOrderDetails).applyAction({
-          order_id: orderId,
+          order_id: createdOrderId as string,
           pizza_id: pizza.pizzaId,
           quantity,
           price: pizza.price,
           cost,
           profit,
         });
-      }
+      
+    }
     }
 
-    return { orderId, orderStatus, denialReason };
+    return { createdOrderId, orderStatus, denialReason };
   } catch (err) {
     console.error("🔥 placeOrder failed:", err);
     return {
