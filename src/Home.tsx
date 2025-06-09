@@ -85,7 +85,7 @@ export default function Home() {
         <OrderItemList items={items} />
       </>
     )}
-  </section>;
+  </section>
     </Layout>
   );
 }

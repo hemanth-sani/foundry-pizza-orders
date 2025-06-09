@@ -15,14 +15,14 @@ export async function updateInventory(pizzaTypeId?: string, quantity: number = 1
 
   // Step 1: Get all recipes for this pizza type
   const recipeLines: Osdk.Instance<HemanthPizzaRecipe>[] = [];
-
+ 
   for await (const recipe of client(HemanthPizzaRecipe).asyncIter()) {
-   
+  
     if (recipe.pizzaTypeId === pizzaTypeId) {
       recipeLines.push(recipe);
     }
   }
-  
+
 
   if (recipeLines.length === 0) {
     return { success: false, reason: "No recipe found for this pizza type." };
@@ -32,7 +32,7 @@ export async function updateInventory(pizzaTypeId?: string, quantity: number = 1
   for (const recipe of recipeLines) {
     const ingredientId = recipe.inventoryId;
     const requiredQty = (recipe.quantityRequired ?? 0) * quantity;
-   
+    
     if (!ingredientId) {
       return { success: false, reason: "Missing inventoryId in recipe." };
     }
@@ -46,6 +46,7 @@ export async function updateInventory(pizzaTypeId?: string, quantity: number = 1
         reason: `${ingredient.ingredients ?? "Ingredient"} is insufficient.`,
       };
     }
+   
   }
 
   // Step 3: Deduct quantities for each ingredient and update

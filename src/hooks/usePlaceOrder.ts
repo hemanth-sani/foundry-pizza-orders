@@ -1,15 +1,13 @@
 import client from "../client";
 import {
   createHemanthOrderStatus,
-  createHemanthOrderDetails
+  createHemanthOrderDetails,
 } from "@pizza-ordering-application/sdk";
 import { updateInventory } from "./useInventoryUpdate";
 import { CartItem } from "../model/CartContext";
 
-
 export async function placeOrder(cart: CartItem[]) {
-
-  if (!cart.length) {
+  if (cart.length === 0) {
     return {
       orderStatus: "denied",
       orderId: "N/A",
@@ -17,76 +15,63 @@ export async function placeOrder(cart: CartItem[]) {
     };
   }
 
-  const orderId = crypto.randomUUID();
   let orderStatus: "fulfilled" | "denied" = "fulfilled";
   let denialReason: string | null = null;
   let createdOrderId: string | number | null = null;
 
-  try {
-    for (const { pizza, quantity } of cart) {
-      console.log(pizza.pizzaTypeId, quantity)
-      const result = await updateInventory(pizza.pizzaTypeId, quantity);
-      
-      if (!result.success) {
-        orderStatus = "denied";
-        
-        denialReason = result.reason ?? null;
-        break;
-      }
+  /* 1️⃣  Inventory check */
+  for (const { pizza, quantity } of cart) {
+    console.log(pizza, quantity);
+    const ok = await updateInventory(pizza.pizzaTypeId, quantity);
+    console.log(ok);
+    if (!ok.success) {
+      orderStatus = "denied";
+      denialReason = ok.reason ?? null;
+      break;
     }
-
-    // 🚨 Important: Ensure this object uses the correct schema keys as per your Ontology action
-    console.log(orderId,orderStatus,denialReason)
-    try {
-      const result = await client(createHemanthOrderStatus).applyAction({
-        order_status: orderStatus,
-        order_time: new Date().toISOString(),
-        denial_reason: denialReason ?? "",
-      }, {
-        $returnEdits: true // Return the created object with its generated primary key
-      });
-     
-    
-      
-      if (result && result.type === "edits") {
-        // Get the primary key of the first added object
-        createdOrderId = result.addedObjects[0].primaryKey as string | number;
-      }
-    } catch (error) {
-      console.error("Failed to create order status:", error);
-    }
-
-    console.log("hello",cart)
-    if (orderStatus === "fulfilled" && createdOrderId) {
-      for (const { pizza, quantity } of cart) {
-        if (pizza.price === undefined) {
-          console.error("Pizza price is undefined");
-          continue;
-        }
-
-        const totalPrice = pizza.price * quantity;
-        const cost = (totalPrice * 0.6).toFixed(2);
-        const profit = (totalPrice * 0.4).toFixed(2);
-        
-        await client(createHemanthOrderDetails).applyAction({
-          order_id: createdOrderId as string,
-          pizza_id: pizza.pizzaId,
-          quantity,
-          price: pizza.price,
-          cost,
-          profit,
-        });
-      
-    }
-    }
-
-    return { createdOrderId, orderStatus, denialReason };
-  } catch (err) {
-    console.error("🔥 placeOrder failed:", err);
-    return {
-      orderStatus: "denied",
-      orderId: "N/A",
-      denialReason: "Unhandled error during order placement",
-    };
   }
+
+  /* 2️⃣  Create OrderStatus row */
+  const statusRes = await client(createHemanthOrderStatus).applyAction(
+    {
+      order_status: orderStatus,
+      order_time: new Date().toISOString(),
+      denial_reason: denialReason ?? "",
+    },
+    { $returnEdits: true }
+  );
+  if (statusRes.type === "edits")
+    createdOrderId = statusRes.addedObjects[0].primaryKey as string | number;
+
+  /* 3️⃣  If fulfilled, create OrderDetails lines */
+  if (orderStatus === "fulfilled" && createdOrderId) {
+    console.log(createdOrderId);
+    for (const { pizza, quantity } of cart) {
+      const unitCost = pizza.cost ?? 0; // field from PizzaMenu
+      const cost   = unitCost * quantity;
+      const revenue = pizza.price * quantity;
+      const profit = revenue - cost;
+
+      const actionParams = {
+        order_id: createdOrderId as string,
+        pizza_id: pizza.pizzaId,
+        quantity: Number(quantity),
+        price: Number(pizza.price),
+        cost: cost.toFixed(2),
+        profit: profit.toFixed(2)
+      };
+      
+     
+      await client(HemanthCreateOrderDetails).applyAction({
+        order_id: createdOrderId as string,
+        pizza_id: pizza.pizzaId,
+        quantity: quantity || 0,
+        price: pizza.price || 0,
+        cost: cost.toFixed(2) ,
+        profit: profit.toFixed(2),
+      });
+    }
+  }
+  console.log("after",createdOrderId);
+  return { createdOrderId, orderStatus, denialReason };
 }

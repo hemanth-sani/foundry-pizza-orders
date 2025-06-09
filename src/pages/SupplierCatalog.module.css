@@ -1,0 +1,40 @@
+/* Overall page spacing */
+.wrapper {
+    margin-top: 1rem;
+  }
+  
+  /* Responsive table */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  th,
+  td {
+    padding: 0.55rem 0.8rem;
+    text-align: left;
+  }
+  thead th {
+    background: #fafafa;
+    font-weight: 600;
+    border-bottom: 2px solid #eee;
+  }
+  
+  /* Order button */
+  .order {
+    border: none;
+    background: #1976d2;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .order:hover {
+    background: #105cb0;
+  }
+  .order:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  

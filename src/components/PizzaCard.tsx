@@ -8,29 +8,32 @@ interface Props {
 }
 
 export default function PizzaCard({ name, variants }: Props) {
-  const { cart, addToCart, decrement } = useCart();  // <- cart & decrement now exposed
+  const { cart, addToCart, decrement } = useCart();
   const ingredients = variants[0].ingredients;
 
   return (
     <div className={styles.pizzaCard}>
-      <h3 className={styles.pizzaTitle}>🍕 {name}</h3>
+      <h3 className={styles.pizzaTitle}>
+        🍕 {name}
+        {variants.every(v => v.outOfStock) && (
+          <span className={styles.oosBadge}>Out&nbsp;of&nbsp;Stock</span>
+        )}
+      </h3>
+
       <p className={styles.pizzaIngredients}>
         <strong>Ingredients:</strong> {ingredients}
       </p>
 
       <ul className={styles.pizzaList}>
-        {variants.map((pizza) => {
-          const inCart = cart.find((c) => c.pizza.pizzaId === pizza.pizzaId);
-          const qty = inCart?.quantity ?? 0;
-
+        {variants.map(pizza => {
+          const qty = cart.find(c => c.pizza.pizzaId === pizza.pizzaId)?.quantity ?? 0;
           return (
             <li key={pizza.pizzaId} className={styles.pizzaVariant}>
               {pizza.size} — ${pizza.price}
-              {qty === 0 ? (
-                <button
-                  className={styles.addButton}
-                  onClick={() => addToCart(pizza)}
-                >
+              {pizza.outOfStock ? (
+                <span className={styles.oosText}>Out&nbsp;of&nbsp;Stock</span>
+              ) : qty === 0 ? (
+                <button className={styles.addButton} onClick={() => addToCart(pizza)}>
                   Add
                 </button>
               ) : (

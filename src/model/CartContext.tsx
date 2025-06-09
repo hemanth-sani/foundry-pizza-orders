@@ -7,6 +7,8 @@ export type Pizza = {
   size: string;
   price: number;
   ingredients: string;
+  outOfStock: boolean; 
+  cost: number;
 };
 
 export interface CartItem {

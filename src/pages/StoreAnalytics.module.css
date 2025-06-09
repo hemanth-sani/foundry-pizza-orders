@@ -1,0 +1,32 @@
+/* KPI CARDS */
+.kpiGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  margin-bottom: 1.5rem;
+}
+.kpiCard {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0 0 0 / .06);
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+.kpiLabel { font-size: 0.8rem; color: #666; }
+.kpiVal   { font-size: 1.3rem; font-weight: 600; margin-top: 2px; }
+
+/* section headings */
+.h3 { margin: 2rem 0 0.35rem; }
+
+/* sparkline */
+.spark { display:block; margin-bottom: 1.2rem; }
+
+/* TABLE */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+th, td { padding: 0.5rem 0.8rem; text-align:left; }
+thead th { background:#fafafa; border-bottom:2px solid #eee; }
+tbody tr:nth-child(odd) { background:#fbfbfb; }

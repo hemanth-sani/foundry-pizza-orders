@@ -30,6 +30,13 @@ export default function Layout({ children }: LayoutProps) {
           <NavLink to="/inventory" className={({ isActive }) => isActive ? css.active : ""}>
           Inventory
           </NavLink>
+          <NavLink to="/suppliers" className={({ isActive }) => isActive ? css.active : ""}>
+          Suppliers
+          </NavLink>
+          <NavLink to="/analytics" className={({ isActive }) => isActive ? css.active : ""}>
+          Analytics
+          </NavLink>
+        
         </nav>
       </header>
 

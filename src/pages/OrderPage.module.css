@@ -46,4 +46,21 @@
     animation: fadeIn .2s ease-in;
   }
   @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+  .patch {
+    margin-left: 0.75rem;
+    background: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .patch:hover:not(:disabled) { background: #256c27; }
+  .done {
+    margin-left: 0.5rem;
+    color: #208b32;
+    font-size: 0.8rem;
+  }
+  
   

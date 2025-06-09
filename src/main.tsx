@@ -8,6 +8,8 @@ import "./index.css";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./model/CartProvider";
 import InventoryDashboard from "./pages/InventoryDashboard";
+import SupplierCatalog from "./pages/SupplierCatalog";
+import StoreAnalytics from "./pages/StoreAnalytics";
 
 
 
@@ -30,6 +32,12 @@ const router = createBrowserRouter(
     },
     { path: "/inventory",
       element: <InventoryDashboard /> 
+    },
+    { path: "/suppliers",
+      element: <SupplierCatalog /> 
+    },
+    { path: "/analytics",
+      element: <StoreAnalytics /> 
     },
     {
       path: "/auth/callback",
