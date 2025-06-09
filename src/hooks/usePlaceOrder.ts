@@ -1,7 +1,7 @@
 import client from "../client";
 import {
   createHemanthOrderStatus,
-  createHemanthOrderDetails,
+  hemanthCreateOrderDetails,
 } from "@pizza-ordering-application/sdk";
 import { updateInventory } from "./useInventoryUpdate";
 import { CartItem } from "../model/CartContext";
@@ -52,23 +52,16 @@ export async function placeOrder(cart: CartItem[]) {
       const revenue = pizza.price * quantity;
       const profit = revenue - cost;
 
-      const actionParams = {
-        order_id: createdOrderId as string,
-        pizza_id: pizza.pizzaId,
-        quantity: Number(quantity),
-        price: Number(pizza.price),
-        cost: cost.toFixed(2),
-        profit: profit.toFixed(2)
-      };
+      
       
      
-      await client(HemanthCreateOrderDetails).applyAction({
+      await client(hemanthCreateOrderDetails).applyAction({
         order_id: createdOrderId as string,
         pizza_id: pizza.pizzaId,
         quantity: quantity || 0,
         price: pizza.price || 0,
-        cost: cost.toFixed(2) ,
-        profit: profit.toFixed(2),
+        cost: cost ,
+        profit: profit,
       });
     }
   }
