@@ -11,7 +11,6 @@ import client from "./client";
 export default function Home() {
   const [bestSellingPizzas, setBestSellingPizzas] = useState<Osdk.Instance<HemanthBestSellingPizza>[]>([]);
   const [pizzaLoading, setPizzaLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pizzaError, setPizzaError] = useState(false);
   const { orders, isLoading: orderLoading, fetchOrderItems } = useOrders();
   const [items, setItems] = useState<Osdk.Instance<HemanthOrderDetails>[]>([]);
