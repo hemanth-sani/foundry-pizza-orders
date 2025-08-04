@@ -56,6 +56,8 @@ export default function Home() {
         <h2>Top 3 Pizzas</h2>
         {pizzaLoading ? (
           <p>Loading...</p>
+        ) : pizzaError ? (
+          <p className={css.error}>⚠️ Failed to load best selling pizzas.</p>
         ) : (
           <ul className={css.list}>
             {bestSellingPizzas?.slice(0, 3).map((pizza) => (
@@ -66,6 +68,7 @@ export default function Home() {
           </ul>
         )}
       </section>
+
 
       <section className={css.section}>
     <h2>Recent Orders</h2>
