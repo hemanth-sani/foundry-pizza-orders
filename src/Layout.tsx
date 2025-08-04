@@ -43,7 +43,8 @@ export default function Layout({ children }: LayoutProps) {
       <main className={css.content}>{children}</main>
 
       <footer className={css.footer}>
-        <p>Built with ❤️ using React + Ontology SDK</p>
+        <p>Made with 💻, ☕, and ❤️ by Hemanth Sani <br></br>
+<i>Code. Create. Iterate. Repeat.</i></p>
       </footer>
     </div>
   );
