@@ -1,6 +1,5 @@
 .node-installation/
 
-# Generated from @osdk/create-app CLI
 # Logs
 logs
 *.log
@@ -10,18 +9,33 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Node / Build
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# Editor directories and files
+# Editor
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Env / Secrets
+.env
+.env.*
+!.env.example   # keep only the placeholder
+
+# Foundry setup files
+jemma/
+download-node.py
+install-node.sh
+settings.sh
+
+# Misc
+.npmrc
