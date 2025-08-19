@@ -1,48 +1,102 @@
-# pizza-ordering-application
+# 🍕 Foundry Pizza Ordering Application
 
-This project was generated with [`@osdk/create-app`](https://www.npmjs.com/package/@osdk/create-app) and demonstrates using the Ontology SDK package `@pizza-ordering-application/sdk` with React on top of Vite. Check out the [Vite](https://vitejs.dev/guide/) docs for further configuration.
+A demo application built with **React + Vite + Palantir Foundry Ontology SDK (OSDK)**.  
+It simulates a **pizza ordering workflow** — from browsing the menu, to adding items to a cart, placing an order, and updating inventory in real time.  
 
-## Developing locally
+This project showcases how frontend apps can integrate with **Foundry Ontologies** using OSDK v2.1+ best practices.
 
-A `FOUNDRY_TOKEN` environment variable is required to authenticate with the NPM registry. When developing locally you may use the token used to git clone the repository (may only be valid for 7 days), or generate a longer lived token [inside Foundry](https://www.palantir.com/docs/foundry/platform-security-third-party/user-generated-tokens/#generation).
+---
 
-Install project dependencies:
+## ✨ Features
+- 📋 **Pizza Menu & Ingredients** – Built from `HemanthPizzaMenu` linked to `HemanthPizzaType`.  
+- 🛒 **Cart System** – Add/remove pizzas with size & price options (`Home.tsx`, `Layout.tsx`).  
+- 📦 **Order Placement** – Creates `HemanthOrderStatus` and `HemanthOrderDetails` objects.  
+- 📊 **Inventory Management** – Deducts ingredients in real time via Ontology actions.  
+- 🔗 **Ontology SDK Integration** – Uses `client.ts` for OSDK data fetching.  
+- 🖼️ **Mock Mode** – Supports running locally without Foundry access.  
+- 🔐 **Auth Callback** – OAuth flow handled in `AuthCallback.tsx`.  
 
-```sh
+---
+
+## 🛠 Tech Stack
+- **Frontend:** React + Vite + TypeScript  
+- **Styling:** CSS Modules (`Home.module.css`, `Layout.module.css`)  
+- **Backend/Data:** Palantir Foundry Ontology SDK (OSDK)  
+- **Testing:** `env.test.ts`  
+- **CI/CD:** GitHub Actions + Foundry CI  
+
+---
+
+## 📂 Project Structure
+src/
+components/ # UI components
+hooks/ # Custom React hooks
+model/ # Data models/types
+pages/ # App pages
+AuthCallback.tsx # Handles Foundry OAuth redirect
+client.ts # OSDK client integration
+env.test.ts # Env variable validation test
+Home.tsx # Main pizza menu + cart
+Layout.tsx # Layout wrapper
+main.tsx # App entry point
+vite-env.d.ts # Vite type definitions
+
+---
+
+## ▶️ Run Locally
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/hemanth-sani/foundry-pizza-orders.git
+cd foundry-pizza-orders
 npm install
-```
-
-Run the following command from the project root to start a local development server on `http://localhost:8080`:
-
-```sh
 npm run dev
 ```
+The app will be available at http://localhost:8080
+.
 
-Development configuration is stored in `.env.development`.
+🔑 Environment Variables
 
-In order to make API requests to Foundry, CORS must be configured for the stack to allow `http://localhost:8080` to load resources. The configured OAuth client must also allow `http://localhost:8080/auth/callback` as a redirect URL.
-
-## Developing with Code Workspaces
-
-Run the following command in a VS Code workspace terminal from the project root to start a development server on the workspace:
-
-```sh
-npm run dev:remote
+Create a .env file based on .env.example:
+```
+VITE_USE_MOCK=true
+VITE_FOUNDRY_STACK_URL=https://your-foundry-stack
+VITE_FOUNDRY_APP_ID=your-app-id
 ```
 
-Open the preview panel to see the application from the development server.
+VITE_USE_MOCK=true → uses local mock data.
 
-## Deploying
+VITE_USE_MOCK=false → connects to Foundry (requires valid credentials).
 
-Foundry CI has been configured to automatically deploy production builds of this project to Foundry website hosting whenever git tags are pushed.
 
+
+🚀 CI/CD
+
+A simple CI workflow can be added to validate builds on every push:
 ```
-git tag <x.y.z>
-git push origin tag <x.y.z>
+.github/workflows/ci.yml
+
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint --if-present
 ```
 
-By default, a new site version will be uploaded and deployed as the production version immediately. If instead, you prefer to only upload the version and manually deploy it as the production version later you can set the `site.uploadOnly` property in the `foundry.config.json` file to `true`.
+📘 Learnings
 
-Production configuration is stored in `.env.production`. A default test is included in `env.test.ts` to verify your production environment variables which runs in Foundry CI whenever git tags are pushed by setting the environment variable `VERIFY_ENV_PRODUCTION=true`.
+Building React apps with Foundry Ontology SDK (OSDK).
 
-If you did not yet register a subdomain for Foundry website hosting you will need to first do so and then fill in the `VITE_FOUNDRY_REDIRECT_URL` in `.env.production`. The configured OAuth client must also allow the auth callback on the subdomain as a redirect URL.
+Linking Ontology objects (Pizza → PizzaType → Inventory).
+
+Designing inventory-aware workflows with Ontology actions.
+
+Using mock mode vs. real Foundry mode.

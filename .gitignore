@@ -30,7 +30,7 @@ lerna-debug.log*
 !.env.example
 
 # Foundry setup
-jemma/
+.jemma/
 download-node.py
 install-node.sh
 settings.sh
