@@ -1,7 +1,11 @@
-.node-installation/
+# Node & build
+node_modules/
+dist/
+dist-ssr/
+*.local
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -9,13 +13,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Node / Build
-node_modules/
-dist/
-dist-ssr/
-*.local
-
-# Editor
+# Editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -26,12 +24,12 @@ dist-ssr/
 *.sln
 *.sw?
 
-# Env / Secrets
+# Env / secrets
 .env
 .env.*
-!.env.example   # keep only the placeholder
+!.env.example
 
-# Foundry setup files
+# Foundry setup
 jemma/
 download-node.py
 install-node.sh
